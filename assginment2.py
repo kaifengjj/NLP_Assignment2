@@ -33,12 +33,13 @@ def get_char_probability(char):
 def get_probability_from_counts(count,generate_nr_list):
     all_occurences = sum(count.values())
     un_seen = min(count.values())
-    l =generate_nr_list(count)
+    l = generate_nr_list(count)
+
     def get_prob(item):
-        if count[item]>threshold:
+        if count[item] > threshold:
             return count[item]/all_occurences
-        elif count[item]>=1:
-            return (count[item]+1)*l[count[item]]/(l[count[item-1]]*all_occurences)
+        elif count[item] >= 1:
+            return (count[item]+1)*l[count[item]]/(l[count[item]-1]*all_occurences)
         else : return un_seen/all_occurences
     return get_prob
 
@@ -97,12 +98,13 @@ def plot():
     show()
 
 
-name_file = "80k_articles.txt"
+name_file = "10k_articles.txt"
 all_content = open(name_file).read()
 ALL_CHARACTER = tokenize(all_content)
 # 分词
-seg_dic = jieba.lcut(ALL_CHARACTER, cut_all=True)
+seg_dic = cut_word(ALL_CHARACTER)
 all_char_counts = Counter(seg_dic)
+print(all_char_counts.most_common(30))
 
 pair = """前天晚上吃晚饭的时候
 前天晚上吃早饭的时候""".split('\n')
@@ -110,7 +112,7 @@ pair = """前天晚上吃晚饭的时候
 pair2 = """正是一个好看的小猫
 真是一个好看的小猫""".split('\n')
 
-pair3 = """我无言以对，简直
+pair3 = """我无言以对,简直
 我简直无言以对""".split('\n')
 
 pairs = [pair, pair2, pair3]
@@ -121,6 +123,7 @@ get_char_prob = get_probability_from_counts(all_char_counts, fast_nr_list)
 print(get_probability_peformance(get_string_probability, pairs))
 
 two_gram_counts = Counter([tuple(seg_dic[i:i+2]) for i in range(len(seg_dic)-1)])
+print(two_gram_counts.most_common(20))
 get_pair_prob = get_probability_from_counts(two_gram_counts, fast_nr_list)
 print(get_probability_peformance(get_2gram_string_prob, pairs))
 
